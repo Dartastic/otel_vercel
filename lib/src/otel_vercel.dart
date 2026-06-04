@@ -2,7 +2,6 @@
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
-import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_vercel_suppression.dart';
 
@@ -86,104 +85,141 @@ Future<T> tracedVercel<T>({
   final t = tracer ?? OTel.tracerProvider().getTracer('otel_vercel');
   final span = t.startSpan('vercel $operation', kind: SpanKind.client);
   try {
-    span.setStringAttribute('rpc.system', 'vercel');
-    span.setStringAttribute('rpc.method', operation);
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.system', 'vercel')]));
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.method', operation)]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.team != null) {
-        span.setStringAttribute('vercel.team', res.team!);
+        span.addAttributes(
+            OTel.attributes([OTel.attributeString('vercel.team', res.team!)]));
       }
       if (res.surface != null) {
-        span.setStringAttribute('vercel.surface', res.surface!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.surface', res.surface!)]));
       }
       if (res.projectId != null) {
-        span.setStringAttribute('vercel.project.id', res.projectId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.project.id', res.projectId!)]));
       }
       if (res.projectName != null) {
-        span.setStringAttribute('vercel.project.name', res.projectName!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.project.name', res.projectName!)]));
       }
       if (res.framework != null) {
-        span.setStringAttribute('vercel.framework', res.framework!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.framework', res.framework!)]));
       }
       if (res.deploymentId != null) {
-        span.setStringAttribute('vercel.deployment.id', res.deploymentId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.deployment.id', res.deploymentId!)]));
       }
       if (res.deploymentTarget != null) {
-        span.setStringAttribute(
-            'vercel.deployment.target', res.deploymentTarget!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              'vercel.deployment.target', res.deploymentTarget!)
+        ]));
       }
       if (res.deploymentState != null) {
-        span.setStringAttribute(
-            'vercel.deployment.state', res.deploymentState!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('vercel.deployment.state', res.deploymentState!)
+        ]));
       }
       if (res.buildId != null) {
-        span.setStringAttribute('vercel.build.id', res.buildId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.build.id', res.buildId!)]));
       }
       if (res.buildSource != null) {
-        span.setStringAttribute('vercel.build.source', res.buildSource!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.build.source', res.buildSource!)]));
       }
       if (res.gitProvider != null) {
-        span.setStringAttribute('vercel.git.provider', res.gitProvider!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.git.provider', res.gitProvider!)]));
       }
       if (res.gitBranch != null) {
-        span.setStringAttribute('vercel.git.branch', res.gitBranch!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.git.branch', res.gitBranch!)]));
       }
       if (res.gitCommit != null) {
-        span.setStringAttribute('vercel.git.commit', res.gitCommit!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.git.commit', res.gitCommit!)]));
       }
       if (res.region != null) {
-        span.setStringAttribute('vercel.region', res.region!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.region', res.region!)]));
       }
       if (res.runtime != null) {
-        span.setStringAttribute('vercel.runtime', res.runtime!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.runtime', res.runtime!)]));
       }
       if (res.functionDurationMs != null) {
-        span.setIntAttribute(
-            'vercel.function.duration_ms', res.functionDurationMs!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeInt(
+              'vercel.function.duration_ms', res.functionDurationMs!)
+        ]));
       }
       if (res.functionInvocations != null) {
-        span.setIntAttribute(
-            'vercel.function.invocations', res.functionInvocations!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeInt(
+              'vercel.function.invocations', res.functionInvocations!)
+        ]));
       }
       if (res.functionMemoryMb != null) {
-        span.setIntAttribute(
-            'vercel.function.memory_mb', res.functionMemoryMb!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeInt('vercel.function.memory_mb', res.functionMemoryMb!)
+        ]));
       }
       if (res.coldStart != null) {
-        span.setBoolAttribute('vercel.function.cold_start', res.coldStart!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeBool('vercel.function.cold_start', res.coldStart!)
+        ]));
       }
       if (res.edgeConfigId != null) {
-        span.setStringAttribute('vercel.edge_config.id', res.edgeConfigId!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('vercel.edge_config.id', res.edgeConfigId!)
+        ]));
       }
       if (res.blobPathname != null) {
-        span.setStringAttribute('vercel.blob.pathname', res.blobPathname!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.blob.pathname', res.blobPathname!)]));
       }
       if (res.blobSizeBytes != null) {
-        span.setIntAttribute('vercel.blob.size_bytes', res.blobSizeBytes!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('vercel.blob.size_bytes', res.blobSizeBytes!)]));
       }
       if (res.kvKey != null) {
-        span.setStringAttribute('vercel.kv.key', res.kvKey!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.kv.key', res.kvKey!)]));
       }
       if (res.kvBytes != null) {
-        span.setIntAttribute('vercel.kv.bytes', res.kvBytes!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('vercel.kv.bytes', res.kvBytes!)]));
       }
       if (res.aliasHostname != null) {
-        span.setStringAttribute('vercel.alias.hostname', res.aliasHostname!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('vercel.alias.hostname', res.aliasHostname!)
+        ]));
       }
       if (res.statusCode != null) {
-        span.setIntAttribute('http.response.status_code', res.statusCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
       }
       if (res.errorCode != null) {
-        span.setStringAttribute('vercel.error.code', res.errorCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('vercel.error.code', res.errorCode!)]));
       }
       final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400) ||
           res.deploymentState == 'ERROR' ||
           res.deploymentState == 'CANCELED';
       if (fail) {
-        span.setStringAttribute(
-            ErrorResource.errorType.key, res.errorCode ?? 'vercel.error');
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              ErrorResource.errorType.key, res.errorCode ?? 'vercel.error')
+        ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
     }
