@@ -1,11 +1,12 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_vercel_suppression.dart';
 
 class VercelResult {
+  /// Creates a result.
   const VercelResult({
     this.team,
     this.surface,
@@ -67,8 +68,13 @@ class VercelResult {
   final String? errorMessage;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class VercelCallResult<T> {
+  /// Creates a call result.
   const VercelCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final VercelResult? result;
 }
@@ -76,149 +82,158 @@ class VercelCallResult<T> {
 Future<T> tracedVercel<T>({
   required String operation,
   required Future<VercelCallResult<T>> Function() invoke,
-  Tracer? tracer,
+  APITracer? tracer,
 }) async {
   if (vercelInstrumentationSuppressed()) {
     final r = await invoke();
     return r.value;
   }
-  final t = tracer ?? OTel.tracerProvider().getTracer('otel_vercel');
+  final t = tracer ?? OTelAPI.tracerProvider().getTracer('otel_vercel');
   final span = t.startSpan('vercel $operation', kind: SpanKind.client);
   try {
     span.addAttributes(
-        OTel.attributes([OTel.attributeString('rpc.system', 'vercel')]));
+        OTelAPI.attributes([OTelAPI.attributeString('rpc.system', 'vercel')]));
     span.addAttributes(
-        OTel.attributes([OTel.attributeString('rpc.method', operation)]));
+        OTelAPI.attributes([OTelAPI.attributeString('rpc.method', operation)]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.team != null) {
-        span.addAttributes(
-            OTel.attributes([OTel.attributeString('vercel.team', res.team!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.team', res.team!)]));
       }
       if (res.surface != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.surface', res.surface!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.surface', res.surface!)]));
       }
       if (res.projectId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.project.id', res.projectId!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.project.id', res.projectId!)]));
       }
       if (res.projectName != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.project.name', res.projectName!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.project.name', res.projectName!)
+        ]));
       }
       if (res.framework != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.framework', res.framework!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.framework', res.framework!)]));
       }
       if (res.deploymentId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.deployment.id', res.deploymentId!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.deployment.id', res.deploymentId!)
+        ]));
       }
       if (res.deploymentTarget != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
               'vercel.deployment.target', res.deploymentTarget!)
         ]));
       }
       if (res.deploymentState != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('vercel.deployment.state', res.deploymentState!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              'vercel.deployment.state', res.deploymentState!)
         ]));
       }
       if (res.buildId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.build.id', res.buildId!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.build.id', res.buildId!)]));
       }
       if (res.buildSource != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.build.source', res.buildSource!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.build.source', res.buildSource!)
+        ]));
       }
       if (res.gitProvider != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.git.provider', res.gitProvider!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.git.provider', res.gitProvider!)
+        ]));
       }
       if (res.gitBranch != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.git.branch', res.gitBranch!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.git.branch', res.gitBranch!)]));
       }
       if (res.gitCommit != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.git.commit', res.gitCommit!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.git.commit', res.gitCommit!)]));
       }
       if (res.region != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.region', res.region!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.region', res.region!)]));
       }
       if (res.runtime != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.runtime', res.runtime!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.runtime', res.runtime!)]));
       }
       if (res.functionDurationMs != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeInt(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt(
               'vercel.function.duration_ms', res.functionDurationMs!)
         ]));
       }
       if (res.functionInvocations != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeInt(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt(
               'vercel.function.invocations', res.functionInvocations!)
         ]));
       }
       if (res.functionMemoryMb != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeInt('vercel.function.memory_mb', res.functionMemoryMb!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt(
+              'vercel.function.memory_mb', res.functionMemoryMb!)
         ]));
       }
       if (res.coldStart != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeBool('vercel.function.cold_start', res.coldStart!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeBool('vercel.function.cold_start', res.coldStart!)
         ]));
       }
       if (res.edgeConfigId != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('vercel.edge_config.id', res.edgeConfigId!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.edge_config.id', res.edgeConfigId!)
         ]));
       }
       if (res.blobPathname != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.blob.pathname', res.blobPathname!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.blob.pathname', res.blobPathname!)
+        ]));
       }
       if (res.blobSizeBytes != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('vercel.blob.size_bytes', res.blobSizeBytes!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt('vercel.blob.size_bytes', res.blobSizeBytes!)
+        ]));
       }
       if (res.kvKey != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.kv.key', res.kvKey!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.kv.key', res.kvKey!)]));
       }
       if (res.kvBytes != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('vercel.kv.bytes', res.kvBytes!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeInt('vercel.kv.bytes', res.kvBytes!)]));
       }
       if (res.aliasHostname != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('vercel.alias.hostname', res.aliasHostname!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('vercel.alias.hostname', res.aliasHostname!)
         ]));
       }
       if (res.statusCode != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt('http.response.status_code', res.statusCode!)
+        ]));
       }
       if (res.errorCode != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('vercel.error.code', res.errorCode!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('vercel.error.code', res.errorCode!)]));
       }
       final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400) ||
           res.deploymentState == 'ERROR' ||
           res.deploymentState == 'CANCELED';
       if (fail) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
-              ErrorResource.errorType.key, res.errorCode ?? 'vercel.error')
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              ErrorAttributes.errorType.key, res.errorCode ?? 'vercel.error')
         ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
